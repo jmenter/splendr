@@ -1,0 +1,38 @@
+.CardStackComponent {
+  border: 2px solid #969;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: row;
+
+  .remaining {
+    background-color: #444;
+    color: wheat;
+  }
+
+  .card {
+    border: 1px solid #888;
+    border-radius: 4px;
+    height: 150px;
+    width: 108px;
+    text-align: center;
+
+    .point-value {
+      font-size: 24px;
+      text-align: left;
+      font-weight: bold;
+      float: left;
+    }
+
+    .color-indicator {
+      width: 24px;
+      height: 24px;
+      float: right;
+    }
+
+    .cost {
+      text-align: left;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  }
+}

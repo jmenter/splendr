@@ -1,0 +1,7 @@
+.PlayerComponent {
+  text-align: left;
+  font-size: 10px;
+  .active {
+    border: 1px solid red;
+  }
+}

@@ -1,0 +1,21 @@
+.GameComponent {
+  display: flex;
+  .white {
+    color: #aaa;
+  }
+  .blue {
+    color: blue;
+  }
+  .green {
+    color: green;
+  }
+  .red {
+    color: red;
+  }
+  .black {
+    color: #333;
+  }
+  .wild {
+    color: yellow;
+  }
+}
