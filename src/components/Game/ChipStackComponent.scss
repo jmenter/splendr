@@ -2,6 +2,14 @@
   text-align: center;
   border: 1px solid green;
   border-radius: 4px;
+  .temp-chips {
+    border: 1px solid green;
+    border-radius: 4px;
+
+    font-size: 14px;
+    width: 96px;
+    height: 150px;
+  }
   .chip-stack {
     width: 30px;
     height: 30px;

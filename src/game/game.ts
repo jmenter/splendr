@@ -135,6 +135,17 @@ export default class SplendorGame {
   };
 
   @action
+  returnChipHandler = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    const color = this.chipColorForId(event.currentTarget.id);
+
+    console.log("returning ", event.currentTarget.id);
+    this.currentPlayer.removeChip(color, 1, true);
+    this.addChips(color, 1);
+  };
+
+  @action
   reserveHandler = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     const ids = event.currentTarget.id.split("-");
     const tier = Number(ids[0]) as CardCostTier;
@@ -159,7 +170,7 @@ export default class SplendorGame {
     this.chipStacks.set(chipColor, newValue < 0 ? 0 : newValue);
   }
 
-  private addChips(chipColor: ChipColor, amount: number) {
+  private addChips(chipColor: ChipColor, amount: number = 1) {
     const currentValue = this.chipStacks.get(chipColor) || 0;
     this.chipStacks.set(chipColor, currentValue + amount);
   }

@@ -1,12 +1,12 @@
 import { ChipColor } from "./game";
 import { Card } from "./card";
-import { observable, computed } from "mobx";
+import { observable, computed, action } from "mobx";
 
 export default class Player {
   id: number;
   @observable name: string;
   @observable chips = new Map<ChipColor, number>();
-  @observable tempChips = new Map<ChipColor, number>();
+  @observable tempChips: ChipColor[] = [];
   tableau: Card[] = [];
   reserveCards: Card[] = [];
 
@@ -60,11 +60,11 @@ export default class Player {
   }
 
   public saveTempChips() {
-    this.tempChips.forEach((value: number, key: ChipColor) => {
-      const currentValue = this.chips.get(key) || 0;
-      this.chips.set(key, currentValue + value);
+    this.tempChips.forEach((color: ChipColor) => {
+      const currentValue = this.chips.get(color) || 0;
+      this.chips.set(color, currentValue + 1);
     });
-    this.tempChips = new Map<ChipColor, number>();
+    this.tempChips = [];
   }
 
   public addChip(
@@ -72,32 +72,38 @@ export default class Player {
     amount: number = 1,
     temp: boolean = false
   ) {
-    const actualChips = temp ? this.tempChips : this.chips;
-    const currentValue = actualChips.get(chipColor) || 0;
-    actualChips.set(chipColor, currentValue + amount);
+    if (temp) {
+      this.tempChips.push(chipColor);
+    } else {
+      const currentValue = this.chips.get(chipColor) || 0;
+      this.chips.set(chipColor, currentValue + amount);
+    }
   }
 
-  public removeChip(
-    chipColor: ChipColor,
-    amount: number = 1,
-    temp: boolean = false
-  ) {
-    const actualChips = temp ? this.tempChips : this.chips;
-    const currentValue = actualChips.get(chipColor);
+  @action
+  removeChip(chipColor: ChipColor, amount: number = 1, temp: boolean = false) {
+    if (temp) {
+      const index = this.tempChips.indexOf(chipColor);
+      this.tempChips.splice(index, 1);
+    } else {
+    }
+    const currentValue = this.chips.get(chipColor);
     if (!currentValue) {
       return;
     }
-    if (currentValue > amount) {
-      actualChips.set(chipColor, currentValue - amount);
+    console.log("removing chip", chipColor, currentValue, amount);
+    if (currentValue >= amount) {
+      this.chips.set(chipColor, currentValue - amount);
     } else {
-      actualChips.set(chipColor, 0);
+      this.chips.set(chipColor, 0);
     }
   }
 
   private getChipCount(temp: boolean = false): number {
-    const values = Array.from(
-      temp ? this.tempChips.values() : this.chips.values()
-    );
+    if (temp) {
+      return this.tempChips.length;
+    }
+    const values = Array.from(this.chips.values());
     if (!values.length) {
       return 0;
     }

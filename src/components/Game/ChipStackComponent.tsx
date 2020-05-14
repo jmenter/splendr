@@ -9,13 +9,34 @@ export default observer(() => {
   const chipStackKeys = Array.from(game.chipStacks.keys());
   return (
     <div className="ChipStackComponent">
+      <div className="temp-chips">
+        temp chips:
+        <br />
+        {player.tempChips.map((color) => {
+          return (
+            <>
+              <div className={`chip-stack ${color}`}>1</div>
+              <button
+                id={`${color}-temp-chip`}
+                onClick={game.returnChipHandler}
+              >
+                return
+              </button>
+            </>
+          );
+        })}
+      </div>
       {chipStackKeys.map((stackColor) => {
         const stackAmount = game.chipStacks.get(stackColor) || 0;
-        const playerAmount = player.tempChips.get(stackColor) || 0;
+        const playerAmount = player.tempChips.find(
+          (chip) => chip === stackColor
+        )?.length
+          ? 1
+          : 0;
         const grabOneEnabled = stackAmount && playerAmount === 0;
         const grabTwoEnabled = stackAmount >= 4 && !player.tempChipCount;
         return (
-          <div>
+          <>
             <div className={`chip-stack ${stackColor}`}>{stackAmount}</div>
             {stackColor !== "wild" && (
               <>
@@ -35,7 +56,7 @@ export default observer(() => {
                 </button>
               </>
             )}
-          </div>
+          </>
         );
       })}
     </div>
