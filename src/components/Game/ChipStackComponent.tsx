@@ -22,14 +22,14 @@ export default observer(() => {
                 <button
                   id={`${stackColor}-1`}
                   disabled={!grabOneEnabled}
-                  onClick={game.currentPlayerSingleChipHandler}
+                  onClick={game.singleChipHandler}
                 >
                   grab 1
                 </button>
                 <button
                   id={`${stackColor}-2`}
                   disabled={!grabTwoEnabled}
-                  onClick={game.currentPlayerDoubleChipHandler}
+                  onClick={game.doubleChipHandler}
                 >
                   grab 2
                 </button>

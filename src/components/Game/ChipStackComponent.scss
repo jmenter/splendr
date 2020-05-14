@@ -1,4 +1,5 @@
 .ChipStackComponent {
+  text-align: center;
   border: 1px solid green;
   border-radius: 4px;
   .chip-stack {
@@ -8,6 +9,6 @@
     font-weight: bold;
     background-color: #555;
     border: 2px solid black;
-    border-radius: 15px;
+    border-radius: 50%;
   }
 }

@@ -5,6 +5,7 @@
   flex-direction: row;
 
   .remaining {
+    text-align: center;
     background-color: #444;
     color: wheat;
   }
@@ -14,25 +15,53 @@
     border-radius: 4px;
     height: 150px;
     width: 108px;
-    text-align: center;
 
     .point-value {
-      font-size: 24px;
+      display: inline;
+      font-size: 32px;
       text-align: left;
       font-weight: bold;
-      float: left;
     }
 
-    .color-indicator {
-      width: 24px;
-      height: 24px;
+    .indicator {
       float: right;
+      margin: 4px;
+      .color-indicator {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+      }
+      .white {
+        background-color: white;
+        border: 2px solid black;
+      }
+      .blue {
+        background-color: blue;
+        border: 2px solid black;
+      }
+      .green {
+        background-color: green;
+        border: 2px solid black;
+      }
+      .red {
+        background-color: red;
+        border: 2px solid black;
+      }
+      .black {
+        background-color: black;
+        border: 2px solid black;
+      }
     }
-
-    .cost {
-      text-align: left;
-      font-size: 18px;
-      font-weight: bold;
+    .costs {
+      display: inline;
+      .cost {
+        font-size: 18px;
+        font-weight: bold;
+      }
+    }
+    .actions {
+      position: relative;
+      display: inline-block;
     }
   }
 }

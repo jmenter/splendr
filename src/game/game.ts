@@ -2,7 +2,7 @@ import Player from "./player";
 import { CardCostTier, Card } from "./card";
 import { Noble, allNobles } from "./noble";
 import { randomizeArray, repeat } from "../utils/utilities";
-import { computed, observable } from "mobx";
+import { computed, observable, action } from "mobx";
 import { tier1Cards } from "./tier1Cards";
 import { tier2Cards } from "./tier2Cards";
 import { tier3Cards } from "./tier3Cards";
@@ -20,10 +20,10 @@ export const AllCardColors: CardColor[] = [
 ];
 
 export default class SplendorGame {
-  chipStacks = new Map<ChipColor, number>();
-  @observable cardStacks = new Map<CardCostTier, Card[]>();
   players: Player[] = [];
-  nobles: Noble[] = [];
+  @observable chipStacks = new Map<ChipColor, number>();
+  @observable cardStacks = new Map<CardCostTier, Card[]>();
+  @observable nobles: Noble[] = [];
 
   @observable currentRound: number = 1;
 
@@ -64,86 +64,78 @@ export default class SplendorGame {
     return this.players[this.currentPlayerIndex];
   }
 
-  @computed
-  get currentPlayerHasTempChips(): boolean {
-    return this.currentPlayer.tempChipCount > 0;
+  public playerCanPurchase(card: Card): boolean {
+    return (
+      !this.currentPlayer.hasTempChips && this.currentPlayer.canBuyCard(card)
+    );
   }
 
-  public currentPlayerSingleChipHandler = (
+  @computed
+  get playerCanReserve(): boolean {
+    return (
+      !this.currentPlayer.hasTempChips && this.currentPlayer.canReserveCard
+    );
+  }
+
+  @action
+  singleChipHandler = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    const player = this.currentPlayer;
     const chipColor = this.chipColorForId(event.currentTarget.id);
     this.removeChips(chipColor, 1);
-    player.addChip(chipColor, true, 1);
-    if (player.tempChipCount >= 3) {
-      player.saveTempChips();
+    this.currentPlayer.addChip(chipColor, 1, true);
+    if (this.currentPlayer.tempChipCount >= 3) {
+      this.currentPlayer.saveTempChips();
       this.endPlayerTurn();
     }
   };
 
-  private removeChips(chipColor: ChipColor, amount: number) {
-    const currentValue = this.chipStacks.get(chipColor);
-    if (!currentValue) {
-      return;
-    }
-    if (currentValue <= amount) {
-      this.chipStacks.delete(chipColor);
-    } else {
-      this.chipStacks.set(chipColor, currentValue - amount);
-    }
-  }
-
-  private addChips(chipColor: ChipColor, amount: number) {
-    const currentValue = this.chipStacks.get(chipColor) || 0;
-    this.chipStacks.set(chipColor, currentValue + amount);
-  }
-
-  private chipColorForId(id: string): ChipColor {
-    return id.split("-")[0] as ChipColor;
-  }
-
-  public currentPlayerDoubleChipHandler = (
+  @action
+  doubleChipHandler = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     const chipColor = this.chipColorForId(event.currentTarget.id);
     this.removeChips(chipColor, 2);
-    this.currentPlayer.addChip(chipColor, false, 2);
+    this.currentPlayer.addChip(chipColor, 2);
     this.endPlayerTurn();
   };
 
-  public currentPlayerPurchaseHandler = (
+  @action purchaseHandler = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     const ids = event.currentTarget.id.split("-");
-    const tier = Number(ids[0]) as CardCostTier;
-    const index = Number(ids[1]);
-    const cardStack = this.cardStacks.get(tier);
+    const costTier = Number(ids[0]) as CardCostTier;
+    const cardIndex = Number(ids[1]);
+    const cardStack = this.cardStacks.get(costTier);
     if (!cardStack) {
       this.endPlayerTurn();
       return;
     }
-    const card = cardStack.splice(index, 1)[0];
-    this.currentPlayer.tableau.push(card);
-    card.costs.forEach((cost) => {
+    const cardToBuy = cardStack.splice(cardIndex, 1)[0];
+
+    var deficit = 0;
+    cardToBuy.costs.forEach((cost) => {
       const costReduction = this.currentPlayer.costReductionFor(cost.color);
-      const netCost = cost.amount - costReduction;
+      const netCostForColor = cost.amount - costReduction;
       const chipAmount = this.currentPlayer.chips.get(cost.color) || 0;
-      var deficit = 0;
-      if (netCost > chipAmount) {
-        const deficit = netCost - chipAmount;
+      if (netCostForColor > chipAmount) {
+        deficit += netCostForColor - chipAmount;
       }
-      // finish
-      const finalCost = netCost >= 0 ? netCost : 0;
-      this.currentPlayer.removeChip(cost.color, false, finalCost);
+      const finalCost = netCostForColor >= 0 ? netCostForColor : 0;
+      this.currentPlayer.removeChip(cost.color, finalCost);
       this.addChips(cost.color, finalCost);
     });
+
+    if (deficit) {
+      this.currentPlayer.removeChip("wild", deficit);
+      this.addChips("wild", deficit);
+    }
+    this.currentPlayer.tableau.push(cardToBuy);
     this.endPlayerTurn();
   };
 
-  public currentPlayerReserveHandler = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  @action
+  reserveHandler = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     const ids = event.currentTarget.id.split("-");
     const tier = Number(ids[0]) as CardCostTier;
     const index = Number(ids[1]);
@@ -161,14 +153,19 @@ export default class SplendorGame {
     }
   };
 
-  public currentPlayerCanPurchase(card: Card): boolean {
-    if (this.currentPlayerHasTempChips) return false;
-    return this.currentPlayer.canBuyCard(card);
+  private removeChips(chipColor: ChipColor, amount: number) {
+    const currentValue = this.chipStacks.get(chipColor) || 0;
+    const newValue = currentValue - amount;
+    this.chipStacks.set(chipColor, newValue < 0 ? 0 : newValue);
   }
 
-  public currentPlayerCanReserve(): boolean {
-    if (this.currentPlayerHasTempChips) return false;
-    return this.currentPlayer.canReserveCard;
+  private addChips(chipColor: ChipColor, amount: number) {
+    const currentValue = this.chipStacks.get(chipColor) || 0;
+    this.chipStacks.set(chipColor, currentValue + amount);
+  }
+
+  private chipColorForId(id: string): ChipColor {
+    return id.split("-")[0] as ChipColor;
   }
 
   private endPlayerTurn() {

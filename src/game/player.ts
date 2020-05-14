@@ -46,12 +46,17 @@ export default class Player {
 
   @computed
   get chipCount(): number {
-    return this.getChipCount(false);
+    return this.getChipCount();
   }
 
   @computed
   get tempChipCount(): number {
     return this.getChipCount(true);
+  }
+
+  @computed
+  get hasTempChips(): boolean {
+    return this.tempChipCount > 0;
   }
 
   public saveTempChips() {
@@ -64,8 +69,8 @@ export default class Player {
 
   public addChip(
     chipColor: ChipColor,
-    temp: boolean = false,
-    amount: number = 1
+    amount: number = 1,
+    temp: boolean = false
   ) {
     const actualChips = temp ? this.tempChips : this.chips;
     const currentValue = actualChips.get(chipColor) || 0;
@@ -74,8 +79,8 @@ export default class Player {
 
   public removeChip(
     chipColor: ChipColor,
-    temp: boolean = false,
-    amount: number = 1
+    amount: number = 1,
+    temp: boolean = false
   ) {
     const actualChips = temp ? this.tempChips : this.chips;
     const currentValue = actualChips.get(chipColor);
@@ -85,7 +90,7 @@ export default class Player {
     if (currentValue > amount) {
       actualChips.set(chipColor, currentValue - amount);
     } else {
-      actualChips.delete(chipColor);
+      actualChips.set(chipColor, 0);
     }
   }
 
@@ -93,9 +98,9 @@ export default class Player {
     const values = Array.from(
       temp ? this.tempChips.values() : this.chips.values()
     );
-    if (values.length) {
-      return values.reduce((s, c) => s + c);
+    if (!values.length) {
+      return 0;
     }
-    return 0;
+    return values.reduce((s, c) => s + c);
   }
 }

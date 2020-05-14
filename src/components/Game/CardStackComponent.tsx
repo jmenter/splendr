@@ -15,40 +15,46 @@ export default observer((props: CardStackComponentProps) => {
     return <div />;
   }
 
-  const remainingCards = cards.length - 4;
-  const displayRemaining = remainingCards > 0 ? remainingCards : 0;
+  const remaining = cards.length - 4;
+  const remainingCards = remaining > 0 ? remaining : 0;
   const visibleCards = cards.slice(0, 4);
   return (
     <div className="CardStackComponent">
-      <div className="card remaining">{displayRemaining} cards remaining</div>
+      <div className="card remaining">{remainingCards} cards remaining</div>
       {visibleCards.map((card, index) => {
-        const canPurchase = game.currentPlayerCanPurchase(card);
-        const canReserve = game.currentPlayerCanReserve();
+        const canPurchase = game.playerCanPurchase(card);
         const id = `${props.cardCostTier}-${index}`;
         return (
           <div className="card">
             <div className="point-value">
-              {card.pointValue > 0 ? card.pointValue : ""}
+              {card.pointValue > 0 ? card.pointValue : "\u00a0"}
             </div>
-            <div className={"color-indicator " + card.color}>G</div>
-            <br />
-            <button
-              id={id}
-              onClick={game.currentPlayerPurchaseHandler}
-              disabled={!canPurchase}
-            >
-              purchase
-            </button>
-            <button
-              id={id}
-              onClick={game.currentPlayerReserveHandler}
-              disabled={!canReserve}
-            >
-              reserve
-            </button>
-            {card.costs.map((cost) => {
-              return <div className={`cost ${cost.color}`}>{cost.amount}</div>;
-            })}
+            <div className="indicator">
+              <div className={"color-indicator " + card.color}> </div>
+            </div>
+            <div className="costs">
+              {card.costs.map((cost) => {
+                return (
+                  <div className={`cost ${cost.color}`}>{cost.amount}</div>
+                );
+              })}
+            </div>
+            <div className="actions">
+              <button
+                id={id}
+                onClick={game.reserveHandler}
+                disabled={!game.playerCanReserve}
+              >
+                hold
+              </button>
+              <button
+                id={id}
+                onClick={game.purchaseHandler}
+                disabled={!canPurchase}
+              >
+                buy
+              </button>
+            </div>
           </div>
         );
       })}
