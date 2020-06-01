@@ -16,7 +16,7 @@ export default class GameComponent extends React.Component {
         <div>
           round #{game.currentRound}, players:
           {game.players.map((player) => {
-            return <PlayerComponent player={player} />;
+            return <PlayerComponent player={player} key={player.id} />;
           })}
         </div>
         <div>

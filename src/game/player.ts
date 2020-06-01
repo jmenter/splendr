@@ -1,18 +1,35 @@
 import { ChipColor } from "./game";
 import { Card } from "./card";
 import { observable, computed, action } from "mobx";
+import { Noble, CardRequirement } from "./noble";
 
+const fakeTableau: Card[] = [
+  { pointValue: 0, color: "red", tier: 1, costs: [] },
+  { pointValue: 0, color: "red", tier: 1, costs: [] },
+  { pointValue: 0, color: "blue", tier: 1, costs: [] },
+  { pointValue: 0, color: "blue", tier: 1, costs: [] },
+  { pointValue: 0, color: "green", tier: 1, costs: [] },
+  { pointValue: 0, color: "green", tier: 1, costs: [] },
+  { pointValue: 0, color: "white", tier: 1, costs: [] },
+  { pointValue: 0, color: "white", tier: 1, costs: [] },
+  { pointValue: 0, color: "black", tier: 1, costs: [] },
+  { pointValue: 0, color: "black", tier: 1, costs: [] },
+] 
 export default class Player {
+  
   id: number;
   @observable name: string;
   @observable chips = new Map<ChipColor, number>();
   @observable tempChips: ChipColor[] = [];
-  tableau: Card[] = [];
+  @observable nobles: Noble[] = [];
+
+  @observable tableau: Card[] = [];
   reserveCards: Card[] = [];
 
   constructor(id: number, name: string) {
     this.id = id;
     this.name = name;
+    fakeTableau.forEach(card => this.tableau.push(card))
   }
 
   public costReductionFor(chipColor: ChipColor): number {
@@ -39,9 +56,29 @@ export default class Player {
     return deficitMinusWilds <= 0;
   }
 
+  public fulfillsRequirementsForNoble(noble: Noble): boolean {
+    const numberOfNotMetConditions = noble.cardRequirements.filter( requirement => {
+      return !this.meetsNobleRequirement(requirement)
+    })
+    return numberOfNotMetConditions.length === 0;
+  }
+
+  private meetsNobleRequirement(requirement: CardRequirement):boolean {
+    return this.tableau.filter( card => card.color === requirement.color).length >= requirement.amount
+  }
+
   @computed
   get canReserveCard(): boolean {
     return this.reserveCards.length < 3;
+  }
+
+  @computed
+  get totalPoints(): number {
+    var cardPoints = 0;
+    this.tableau.forEach( card => cardPoints += card.pointValue)
+    var noblesPoints = 0;
+    this.nobles.forEach( noble => noblesPoints += noble.pointValue)
+    return cardPoints + noblesPoints;
   }
 
   @computed
