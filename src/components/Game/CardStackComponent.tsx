@@ -42,14 +42,16 @@ export default observer((props: CardStackComponentProps) => {
             <div className="actions">
               <button
                 id={id}
-                onClick={game.reserveHandler}
+                onClick={(event) => game.reserveHandler(event.currentTarget.id)}
                 disabled={!game.playerCanReserve}
               >
                 hold
               </button>
               <button
                 id={id}
-                onClick={game.purchaseHandler}
+                onClick={(event) =>
+                  game.purchaseHandler(event.currentTarget.id)
+                }
                 disabled={!canPurchase}
               >
                 buy

@@ -18,7 +18,9 @@ export default observer(() => {
               <div className={`chip-stack ${color}`}>1</div>
               <button
                 id={`${color}-temp-chip`}
-                onClick={game.returnChipHandler}
+                onClick={(event) =>
+                  game.returnChipHandler(event.currentTarget.id)
+                }
               >
                 return
               </button>
@@ -43,14 +45,18 @@ export default observer(() => {
                 <button
                   id={`${stackColor}-1`}
                   disabled={!grabOneEnabled}
-                  onClick={game.singleChipHandler}
+                  onClick={(event) =>
+                    game.singleChipHandler(event.currentTarget.id)
+                  }
                 >
                   grab 1
                 </button>
                 <button
                   id={`${stackColor}-2`}
                   disabled={!grabTwoEnabled}
-                  onClick={game.doubleChipHandler}
+                  onClick={(event) =>
+                    game.doubleChipHandler(event.currentTarget.id)
+                  }
                 >
                   grab 2
                 </button>

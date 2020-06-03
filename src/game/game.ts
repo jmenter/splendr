@@ -1,5 +1,5 @@
 import Player from "./player";
-import { CardCostTier, Card } from "./card";
+import { CardCostTier, Card, CardColor, AllCardColors } from "./card";
 import { Noble, allNobles } from "./noble";
 import { randomizeArray, repeat } from "../utils/utilities";
 import { computed, observable, action } from "mobx";
@@ -8,16 +8,7 @@ import { tier2Cards } from "./tier2Cards";
 import { tier3Cards } from "./tier3Cards";
 
 export type PlayerCount = 2 | 3 | 4;
-export type CardColor = "white" | "blue" | "green" | "red" | "black";
 export type ChipColor = CardColor | "wild";
-
-export const AllCardColors: CardColor[] = [
-  "white",
-  "blue",
-  "green",
-  "red",
-  "black",
-];
 
 export default class SplendorGame {
   players: Player[] = [];
@@ -78,10 +69,8 @@ export default class SplendorGame {
   }
 
   @action
-  singleChipHandler = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    const chipColor = this.chipColorForId(event.currentTarget.id);
+  singleChipHandler = (targetId: string) => {
+    const chipColor = this.chipColorForId(targetId);
     this.removeChips(chipColor, 1);
     this.currentPlayer.addChip(chipColor, 1, true);
     if (this.currentPlayer.tempChipCount >= 3) {
@@ -91,19 +80,15 @@ export default class SplendorGame {
   };
 
   @action
-  doubleChipHandler = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    const chipColor = this.chipColorForId(event.currentTarget.id);
+  doubleChipHandler = (targetId: string) => {
+    const chipColor = this.chipColorForId(targetId);
     this.removeChips(chipColor, 2);
     this.currentPlayer.addChip(chipColor, 2);
     this.endPlayerTurn();
   };
 
-  @action purchaseHandler = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    const ids = event.currentTarget.id.split("-");
+  @action purchaseHandler = (targetId: string) => {
+    const ids = targetId.split("-");
     const costTier = Number(ids[0]) as CardCostTier;
     const cardIndex = Number(ids[1]);
     const cardStack = this.cardStacks.get(costTier);
@@ -135,19 +120,15 @@ export default class SplendorGame {
   };
 
   @action
-  returnChipHandler = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    const color = this.chipColorForId(event.currentTarget.id);
-
-    console.log("returning ", event.currentTarget.id);
+  returnChipHandler = (targetId: string) => {
+    const color = this.chipColorForId(targetId);
     this.currentPlayer.removeChip(color, 1, true);
     this.addChips(color, 1);
   };
 
   @action
-  reserveHandler = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    const ids = event.currentTarget.id.split("-");
+  reserveHandler = (targetId: string) => {
+    const ids = targetId.split("-");
     const tier = Number(ids[0]) as CardCostTier;
     const index = Number(ids[1]);
     const cardStack = this.cardStacks.get(tier);
