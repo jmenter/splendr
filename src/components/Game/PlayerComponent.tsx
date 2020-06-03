@@ -31,11 +31,18 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
         <div className={activeClass}>
           <div>player {player.name}</div>
           <div>id {player.id}</div>
+          <div>points {player.totalPoints}</div>
           <div>
             chips ({player.chipCount}) {JSON.stringify(player.chips)}
           </div>
           <div>
             tempchips ({player.tempChipCount}){JSON.stringify(player.tempChips)}
+          </div>
+          <div>
+            cards ({player.tableau.length}){JSON.stringify(player.tableau)}
+          </div>
+          <div>
+            nobles ({player.nobles.length}){JSON.stringify(player.nobles)}
           </div>
           <form onSubmit={this.handleSubmit}>
             <label>

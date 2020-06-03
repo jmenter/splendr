@@ -11,12 +11,15 @@ export type PlayerCount = 2 | 3 | 4;
 export type ChipColor = CardColor | "wild";
 
 export default class SplendorGame {
+
+  @observable currentRound: number = 1;
+  
   players: Player[] = [];
+
   @observable chipStacks = new Map<ChipColor, number>();
   @observable cardStacks = new Map<CardCostTier, Card[]>();
   @observable nobles: Noble[] = [];
 
-  @observable currentRound: number = 1;
 
   @observable private currentPlayerIndex = 0;
 
@@ -145,6 +148,16 @@ export default class SplendorGame {
     }
   };
 
+  private nobleCheck() {
+    const availableNobles = this.nobles.filter( noble => {
+      return this.currentPlayer.fulfillsRequirementsForNoble(noble);
+    })
+    if (availableNobles.length > 0) {
+      const grabbedNoble = this.nobles.splice(0, 1)[0];
+      this.currentPlayer.nobles.push(grabbedNoble)
+    }
+  }
+
   private removeChips(chipColor: ChipColor, amount: number) {
     const currentValue = this.chipStacks.get(chipColor) || 0;
     const newValue = currentValue - amount;
@@ -161,6 +174,7 @@ export default class SplendorGame {
   }
 
   private endPlayerTurn() {
+    this.nobleCheck()
     this.currentPlayerIndex++;
     if (this.currentPlayerIndex >= this.players.length) {
       this.currentRound++;
