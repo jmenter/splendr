@@ -1,4 +1,4 @@
-import { CardColor } from "./game";
+import { CardColor } from "./card";
 
 export type CardRequirement = {
   color: CardColor;
