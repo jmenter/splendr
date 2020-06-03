@@ -1,5 +1,4 @@
 import React from "react";
-import stores from "../../stores/Stores";
 import { observer } from "mobx-react";
 import { observable } from "mobx";
 
@@ -12,7 +11,7 @@ export default class Name extends React.Component {
   };
 
   handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    stores.client.sendMessage(`hi from ${this.name}`);
+    // stores.client.sendMessage(`hi from ${this.name}`);
     event.preventDefault();
   };
 

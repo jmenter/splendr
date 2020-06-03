@@ -5,6 +5,10 @@ export type CardRequirement = {
   amount: number;
 };
 
+export function keyForNoble(noble: Noble): string {
+  return JSON.stringify(noble.cardRequirements);
+}
+
 export type Noble = {
   pointValue: number;
   cardRequirements: CardRequirement[];

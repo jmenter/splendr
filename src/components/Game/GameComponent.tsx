@@ -6,6 +6,7 @@ import { NobleComponent } from "./NobleComponent";
 import CardStackComponent from "./CardStackComponent";
 import ChipStackComponent from "./ChipStackComponent";
 import "./GameComponent.scss";
+import { keyForNoble } from "../../game/noble";
 
 @observer
 export default class GameComponent extends React.Component {
@@ -32,7 +33,7 @@ export default class GameComponent extends React.Component {
         <div>
           nobles:
           {game.nobles.map((noble) => {
-            return <NobleComponent noble={noble} />;
+            return <NobleComponent noble={noble} key={keyForNoble(noble)} />;
           })}
         </div>
       </div>

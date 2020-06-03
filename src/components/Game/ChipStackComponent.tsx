@@ -14,7 +14,7 @@ export default observer(() => {
         <br />
         {player.tempChips.map((color) => {
           return (
-            <>
+            <div key={color}>
               <div className={`chip-stack ${color}`}>1</div>
               <button
                 id={`${color}-temp-chip`}
@@ -24,7 +24,7 @@ export default observer(() => {
               >
                 return
               </button>
-            </>
+            </div>
           );
         })}
       </div>
@@ -38,7 +38,7 @@ export default observer(() => {
         const grabOneEnabled = stackAmount && playerAmount === 0;
         const grabTwoEnabled = stackAmount >= 4 && !player.tempChipCount;
         return (
-          <>
+          <div key={stackColor}>
             <div className={`chip-stack ${stackColor}`}>{stackAmount}</div>
             {stackColor !== "wild" && (
               <>
@@ -62,7 +62,7 @@ export default observer(() => {
                 </button>
               </>
             )}
-          </>
+          </div>
         );
       })}
     </div>
