@@ -11,14 +11,14 @@ export type PlayerProps = {
 
 @observer
 export default class PlayerComponent extends React.Component<PlayerProps> {
-  @observable name: string = "";
+  @observable tempName: string = "";
 
   handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.name = event.target.value;
+    this.tempName = event.target.value;
   };
 
   handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    this.props.player.name = this.name;
+    this.props.player.name = this.tempName;
     event.preventDefault();
   };
 
@@ -49,7 +49,7 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
               change name:
               <input
                 type="text"
-                value={this.name}
+                value={this.tempName}
                 onChange={this.handleChange}
               ></input>
             </label>
