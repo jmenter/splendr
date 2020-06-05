@@ -4,4 +4,47 @@
   .active {
     border: 1px solid red;
   }
+  .inactive {
+    border: 1px solid gray;
+  }
+  .chips-container {
+    display: flex;
+  }
+  .player-chips {
+    .white {
+      border: 2px solid gray;
+      background-color: wheat;
+      color: black;
+    }
+    .blue {
+      border: 2px solid gray;
+      background-color: blue;
+      color: black;
+    }
+    .green {
+      border: 2px solid gray;
+      background-color: green;
+      color: black;
+    }
+    .red {
+      border: 2px solid gray;
+      background-color: red;
+      color: black;
+    }
+    .black {
+      border: 2px solid gray;
+      background-color: black;
+      color: white;
+    }
+    .chip {
+      float: left;
+      margin: 4px;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+    }
+  }
 }

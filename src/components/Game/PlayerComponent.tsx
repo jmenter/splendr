@@ -25,15 +25,22 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
   render() {
     const { player } = this.props;
     const isActive = stores.gameStore.game.currentPlayer === this.props.player;
-    const activeClass = isActive ? "active" : "";
+    const activeClass = isActive ? "active" : "inactive";
     return (
       <div className="PlayerComponent">
         <div className={activeClass}>
           <div>player {player.name}</div>
           <div>id {player.id}</div>
           <div>points {player.totalPoints}</div>
-          <div>
-            chips ({player.chipCount}) {JSON.stringify(player.chips)}
+          <div className="chips-container">
+            chips ({player.chipCount}){/* {JSON.stringify(player.chips)} */}
+            <div className="player-chips">
+              {Array.from(player.chips).map((value) => {
+                const color = value[0];
+                const quantity = value[1];
+                return <div className={`chip ${color}`}>{quantity}</div>;
+              })}
+            </div>
           </div>
           <div>
             tempchips ({player.tempChipCount}){JSON.stringify(player.tempChips)}
