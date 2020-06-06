@@ -181,6 +181,12 @@ export default class SplendorGame {
     }
   }
 
+  private runCardTests() {
+    this.runTestsForCards(tier1Cards, "1");
+    this.runTestsForCards(tier2Cards, "2");
+    this.runTestsForCards(tier3Cards, "3");
+  }
+
   private runTestsForCards(cards: Card[], tierLabel: string) {
     const totalPoints = cards
       .map((card) => card.pointValue)
@@ -197,10 +203,5 @@ export default class SplendorGame {
       console.log(`${cardsOfColor.length} cards for ${cardColor}`);
       console.log(`tier ${tierLabel} costs for ${cardColor}: ${costsOfColor}`);
     });
-  }
-  private runCardTests() {
-    this.runTestsForCards(tier1Cards, "1");
-    this.runTestsForCards(tier2Cards, "2");
-    this.runTestsForCards(tier3Cards, "3");
   }
 }
