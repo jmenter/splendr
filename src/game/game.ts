@@ -26,6 +26,7 @@ export default class SplendorGame {
     this.initializeChips(numberOfPlayers === 4 ? 7 : numberOfPlayers + 2);
     this.initializeCards();
     this.initializeNobles(numberOfPlayers + 1);
+    this.runCardTests();
   }
 
   private initializePlayers(amount: number) {
@@ -178,5 +179,28 @@ export default class SplendorGame {
       this.currentRound++;
       this.currentPlayerIndex = 0;
     }
+  }
+
+  private runTestsForCards(cards: Card[], tierLabel: string) {
+    const totalPoints = cards
+      .map((card) => card.pointValue)
+      .reduce((p, c) => p + c);
+    console.log(`tier ${tierLabel} points: ${totalPoints}`);
+    console.log("cards of color:");
+    AllCardColors.forEach((cardColor) => {
+      const cardsOfColor = cards.filter((card) => card.color === cardColor);
+      const costsOfColor = cards
+        .flatMap((card) => card.costs)
+        .filter((cardCost) => cardCost.color === cardColor)
+        .map((cardCost) => cardCost.amount)
+        .reduce((p, c) => p + c);
+      console.log(`${cardsOfColor.length} cards for ${cardColor}`);
+      console.log(`tier ${tierLabel} costs for ${cardColor}: ${costsOfColor}`);
+    });
+  }
+  private runCardTests() {
+    this.runTestsForCards(tier1Cards, "1");
+    this.runTestsForCards(tier2Cards, "2");
+    this.runTestsForCards(tier3Cards, "3");
   }
 }
