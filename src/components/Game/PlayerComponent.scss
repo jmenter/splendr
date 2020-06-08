@@ -10,6 +10,38 @@
   .chips-container {
     display: flex;
   }
+  .cards-container {
+    display: flex;
+  }
+  .player-cards {
+    flex-direction: row;
+    .card {
+      margin: 4px;
+      float: left;
+      width: 20px;
+      height: 30px;
+      border-radius: 3px;
+      border: 2px solid gray;
+      text-align: center;
+      font-size: 18px;
+    }
+  }
+  .nobles-container {
+    display: flex;
+  }
+  .player-nobles {
+    flex-direction: row;
+    .noble {
+      margin: 4px;
+      float: left;
+      width: 20px;
+      height: 30px;
+      border-radius: 3px;
+      border: 2px solid gray;
+      text-align: center;
+      font-size: 18px;
+    }
+  }
   .player-chips {
     .white {
       border: 2px solid gray;
@@ -18,7 +50,7 @@
     }
     .blue {
       border: 2px solid gray;
-      background-color: blue;
+      background-color: rgb(0, 115, 255);
       color: black;
     }
     .green {
@@ -35,6 +67,11 @@
       border: 2px solid gray;
       background-color: black;
       color: white;
+    }
+    .wild {
+      border: 2px solid gray;
+      background-color: yellow;
+      color: black;
     }
     .chip {
       float: left;

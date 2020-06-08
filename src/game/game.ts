@@ -176,32 +176,103 @@ export default class SplendorGame {
     this.nobleCheck();
     this.currentPlayerIndex++;
     if (this.currentPlayerIndex >= this.players.length) {
-      this.currentRound++;
-      this.currentPlayerIndex = 0;
+      this.handleEndOfRoundStuff();
     }
   }
 
+  private handleEndOfRoundStuff() {
+    const playersWithSufficientPoints = this.players.filter(
+      (player) => player.totalPoints >= 15
+    );
+    if (playersWithSufficientPoints.length === 0) {
+      this.finishRound();
+    } else if (playersWithSufficientPoints.length === 1) {
+      console.log("1 clear winner");
+      this.endGame(playersWithSufficientPoints[0]);
+    } else {
+      console.log("multiple possile winners: ", playersWithSufficientPoints);
+      const sortedByScore = playersWithSufficientPoints.sort(
+        (a: Player, b: Player) => a.totalPoints - b.totalPoints
+      );
+      const highestScore = sortedByScore[0].totalPoints;
+      console.log("highest score: ", highestScore);
+      const highestScorers = playersWithSufficientPoints.filter(
+        (player) => player.totalPoints === highestScore
+      );
+      console.log("all the higest scoreres:", highestScorers);
+      if (highestScorers.length === 1) {
+        console.log("1 winningest winner");
+        this.endGame(highestScorers[0]);
+      } else {
+        this.finishRound();
+      }
+    }
+  }
+
+  private finishRound() {
+    console.log("finishing round");
+
+    this.currentRound++;
+    this.currentPlayerIndex = 0;
+  }
+  private endGame(winner: Player) {
+    console.log("game has ended, winner: ", winner);
+  }
   private runCardTests() {
-    this.runTestsForCards(tier1Cards, "1");
-    this.runTestsForCards(tier2Cards, "2");
+    // this.runTestsForCards(tier1Cards, "1");
+    // this.runTestsForCards(tier2Cards, "2");
     this.runTestsForCards(tier3Cards, "3");
   }
 
   private runTestsForCards(cards: Card[], tierLabel: string) {
-    const totalPoints = cards
-      .map((card) => card.pointValue)
-      .reduce((p, c) => p + c);
-    console.log(`tier ${tierLabel} points: ${totalPoints}`);
+    console.log("\n\nbeginning test for tier : ", tierLabel);
+    console.log("here are my cards: ", cards);
+
+    const totalPointsValues = cards.map((card) => card.pointValue);
+    console.log("these are the totalPointsValues: ", totalPointsValues);
+
+    const totalPointsValuesReduced = totalPointsValues.reduce((p, c) => p + c);
+    console.log(
+      "these are the totalPointsValuesReduced",
+      totalPointsValuesReduced
+    );
+
+    // const totalPoints = cards
+    //   .map((card) => card.pointValue)
+    //   .reduce((p, c) => p + c);
+    // console.log(`tier ${tierLabel} points: ${totalPoints}`);
+
     console.log("cards of color:");
     AllCardColors.forEach((cardColor) => {
+      console.log("now checking for: ", cardColor);
       const cardsOfColor = cards.filter((card) => card.color === cardColor);
-      const costsOfColor = cards
-        .flatMap((card) => card.costs)
-        .filter((cardCost) => cardCost.color === cardColor)
-        .map((cardCost) => cardCost.amount)
-        .reduce((p, c) => p + c);
+
+      const mappedCostsOfColor = cards.map((card) => card.costs);
+      console.log("map: ", mappedCostsOfColor);
+
+      const flatMappedCostsOfColor = mappedCostsOfColor.flat();
+      console.log("flat", flatMappedCostsOfColor);
+      const flatMappedCostsOfColorFilter = flatMappedCostsOfColor.filter(
+        (cardCost) => cardCost.color === cardColor
+      );
+      console.log("filter", flatMappedCostsOfColorFilter);
+      const flatMappedCostsOfColorFilterReMapped = flatMappedCostsOfColorFilter.map(
+        (cardCost) => cardCost.amount
+      );
+      console.log("map", flatMappedCostsOfColorFilterReMapped);
+      const flatMappedCostsOfColorFilterReMappedReduced = flatMappedCostsOfColorFilterReMapped.reduce(
+        (p, c) => p + c
+      );
+      console.log("reduced", flatMappedCostsOfColorFilterReMappedReduced);
+      // const costsOfColor = cards;
+      // .flatMap((card) => card.costs)
+      // .filter((cardCost) => cardCost.color === cardColor)
+      // .map((cardCost) => cardCost.amount)
+      // .reduce((p, c) => p + c);
       console.log(`${cardsOfColor.length} cards for ${cardColor}`);
-      console.log(`tier ${tierLabel} costs for ${cardColor}: ${costsOfColor}`);
+      console.log(
+        `tier ${tierLabel} costs for ${cardColor}: ${flatMappedCostsOfColorFilterReMappedReduced}`
+      );
     });
   }
 }

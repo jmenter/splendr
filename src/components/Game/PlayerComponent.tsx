@@ -33,34 +33,49 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
           <div>id {player.id}</div>
           <div>points {player.totalPoints}</div>
           <div className="chips-container">
-            chips ({player.chipCount}){/* {JSON.stringify(player.chips)} */}
+            {/* chips ({player.chipCount}){JSON.stringify(player.chips)} */}
             <div className="player-chips">
-              {Array.from(player.chips).map((value) => {
-                const color = value[0];
-                const quantity = value[1];
-                return <div className={`chip ${color}`}>{quantity}</div>;
-              })}
+              {Array.from(player.chips)
+                .filter((value) => value[1] > 0)
+                .map((value) => {
+                  const color = value[0];
+                  const quantity = value[1];
+                  return <div className={`chip ${color}`}>{quantity}</div>;
+                })}
             </div>
           </div>
-          <div>
-            tempchips ({player.tempChipCount}){JSON.stringify(player.tempChips)}
+
+          <div className="cards-container">
+            <div className="player-cards">
+              {player.tableau.map((card) => {
+                return (
+                  <div className={`card ${card.color}`}>{card.pointValue}</div>
+                );
+              })}
+            </div>
+            {/* cards ({player.tableau.length}){JSON.stringify(player.tableau)} */}
           </div>
-          <div>
-            cards ({player.tableau.length}){JSON.stringify(player.tableau)}
+
+          <div className="nobles-container">
+            <div className="player-nobles">
+              {player.nobles.map((noble) => {
+                return <div className={`noble`}>{noble.pointValue}</div>;
+              })}
+            </div>
+            <div>
+              {/* nobles ({player.nobles.length}){JSON.stringify(player.nobles)} */}
+            </div>
+            <form onSubmit={this.handleSubmit}>
+              <label>
+                change name:
+                <input
+                  type="text"
+                  value={this.tempName}
+                  onChange={this.handleChange}
+                ></input>
+              </label>
+            </form>
           </div>
-          <div>
-            nobles ({player.nobles.length}){JSON.stringify(player.nobles)}
-          </div>
-          <form onSubmit={this.handleSubmit}>
-            <label>
-              change name:
-              <input
-                type="text"
-                value={this.tempName}
-                onChange={this.handleChange}
-              ></input>
-            </label>
-          </form>
         </div>
       </div>
     );
