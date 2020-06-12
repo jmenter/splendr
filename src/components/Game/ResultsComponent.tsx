@@ -11,8 +11,7 @@ export default class ResultsComponent extends React.Component<
 > {
   render() {
     return (
-      <div>
-        we are the results component, the winner is{" "}
+      <div className="ResultsComponent">
         {JSON.stringify(this.props.player)}
       </div>
     );
