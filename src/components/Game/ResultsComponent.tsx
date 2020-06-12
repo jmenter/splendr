@@ -1,5 +1,6 @@
 import React from "react";
 import Player from "../../game/player";
+import "./ResultsComponent.scss";
 
 export type ResultsComponentProps = {
   player: Player;
