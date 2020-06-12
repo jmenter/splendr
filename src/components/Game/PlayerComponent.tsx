@@ -58,7 +58,6 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
                 );
               })}
             </div>
-            {/* cards ({player.tableau.length}){JSON.stringify(player.tableau)} */}
           </div>
 
           <div className="nobles-container">
