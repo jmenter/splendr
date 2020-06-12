@@ -12,21 +12,21 @@ export type ChipColor = CardColor | "wild";
 
 export default class SplendorGame {
   @observable currentRound: number = 1;
+  @observable private currentPlayerIndex = 0;
 
   players: Player[] = [];
+  @observable winningPlayer?: Player;
 
   @observable chipStacks = new Map<ChipColor, number>();
   @observable cardStacks = new Map<CardCostTier, Card[]>();
   @observable nobles: Noble[] = [];
-
-  @observable private currentPlayerIndex = 0;
 
   constructor(numberOfPlayers: PlayerCount) {
     this.initializePlayers(numberOfPlayers);
     this.initializeChips(numberOfPlayers === 4 ? 7 : numberOfPlayers + 2);
     this.initializeCards();
     this.initializeNobles(numberOfPlayers + 1);
-    this.runCardTests();
+    // this.runCardTests();
   }
 
   private initializePlayers(amount: number) {
@@ -215,9 +215,12 @@ export default class SplendorGame {
     this.currentRound++;
     this.currentPlayerIndex = 0;
   }
+
   private endGame(winner: Player) {
     console.log("game has ended, winner: ", winner);
+    this.winningPlayer = winner;
   }
+
   private runCardTests() {
     // this.runTestsForCards(tier1Cards, "1");
     // this.runTestsForCards(tier2Cards, "2");
