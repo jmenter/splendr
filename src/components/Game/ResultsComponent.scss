@@ -1,3 +1,10 @@
 .ResultsComponent {
-  background-color: red;
+  text-align: center;
+  .announce {
+    font-size: 12px;
+  }
+
+  .winner {
+    font-size: 72px;
+  }
 }

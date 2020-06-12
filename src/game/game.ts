@@ -27,6 +27,7 @@ export default class SplendorGame {
     this.initializeCards();
     this.initializeNobles(numberOfPlayers + 1);
     // this.runCardTests();
+    // this.winningPlayer = this.players[0];
   }
 
   private initializePlayers(amount: number) {
