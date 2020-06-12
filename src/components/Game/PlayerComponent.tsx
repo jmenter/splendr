@@ -33,14 +33,17 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
           <div>id {player.id}</div>
           <div>points {player.totalPoints}</div>
           <div className="chips-container">
-            {/* chips ({player.chipCount}){JSON.stringify(player.chips)} */}
             <div className="player-chips">
               {Array.from(player.chips)
                 .filter((value) => value[1] > 0)
                 .map((value) => {
                   const color = value[0];
                   const quantity = value[1];
-                  return <div className={`chip ${color}`}>{quantity}</div>;
+                  return (
+                    <div className={`chip ${color}`} key={Math.random()}>
+                      {quantity}
+                    </div>
+                  );
                 })}
             </div>
           </div>
@@ -49,7 +52,9 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
             <div className="player-cards">
               {player.tableau.map((card) => {
                 return (
-                  <div className={`card ${card.color}`}>{card.pointValue}</div>
+                  <div className={`card ${card.color}`} key={Math.random()}>
+                    {card.pointValue}
+                  </div>
                 );
               })}
             </div>
@@ -59,11 +64,12 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
           <div className="nobles-container">
             <div className="player-nobles">
               {player.nobles.map((noble) => {
-                return <div className={`noble`}>{noble.pointValue}</div>;
+                return (
+                  <div className={`noble`} key={Math.random()}>
+                    {noble.pointValue}
+                  </div>
+                );
               })}
-            </div>
-            <div>
-              {/* nobles ({player.nobles.length}){JSON.stringify(player.nobles)} */}
             </div>
             <form onSubmit={this.handleSubmit}>
               <label>
