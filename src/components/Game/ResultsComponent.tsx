@@ -1,17 +1,17 @@
 import React from "react";
-import Player from "../../game/player";
 import "./ResultsComponent.scss";
 import stores from "../../stores/Stores";
+import SplendorGame from "../../game/game";
 
 export type ResultsComponentProps = {
-  players: Player[];
+  game: SplendorGame;
 };
 
 export default class ResultsComponent extends React.Component<
   ResultsComponentProps
 > {
   render() {
-    const sortedPlayers = this.props.players.sort(
+    const sortedPlayers = this.props.game.players.sort(
       (a, b) => b.totalPoints - a.totalPoints
     );
     const winningPlayer = sortedPlayers[0];

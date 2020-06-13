@@ -19,7 +19,7 @@ export default App;
 const TheGame = observer(() => {
   const winningPlayer = stores.gameStore.game.winningPlayer;
   if (winningPlayer) {
-    return <ResultsComponent players={stores.gameStore.game.players} />;
+    return <ResultsComponent game={stores.gameStore.game} />;
   } else {
     return <GameComponent />;
   }

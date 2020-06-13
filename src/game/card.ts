@@ -1,5 +1,3 @@
-import { ChipColor } from "./game";
-
 export type CardColor = "white" | "blue" | "green" | "red" | "black";
 
 export const AllCardColors: CardColor[] = [
@@ -13,7 +11,7 @@ export const AllCardColors: CardColor[] = [
 export type CardCostTier = 1 | 2 | 3;
 
 export type CardCost = {
-  color: ChipColor;
+  color: CardColor;
   amount: number;
 };
 

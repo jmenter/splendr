@@ -22,6 +22,10 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
     event.preventDefault();
   };
 
+  handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    this.props.player.name = this.tempName;
+  };
+
   render() {
     const { player } = this.props;
     const isActive = stores.gameStore.game.currentPlayer === this.props.player;
@@ -77,6 +81,7 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
                   type="text"
                   value={this.tempName}
                   onChange={this.handleChange}
+                  onBlur={this.handleBlur}
                 ></input>
               </label>
             </form>

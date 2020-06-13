@@ -1,5 +1,5 @@
 import { ChipColor } from "./game";
-import { Card } from "./card";
+import { Card, CardColor } from "./card";
 import { observable, computed, action } from "mobx";
 import { Noble, CardRequirement } from "./noble";
 
@@ -31,8 +31,8 @@ export default class Player {
     fakeTableau.forEach((card) => this.tableau.push(card));
   }
 
-  public costReductionFor(chipColor: ChipColor): number {
-    return this.tableau.filter((card) => card.color === chipColor).length;
+  public costReductionFor(cardColor: CardColor): number {
+    return this.tableau.filter((card) => card.color === cardColor).length;
   }
 
   public buyingPowerForColor(chipColor: ChipColor): number {
