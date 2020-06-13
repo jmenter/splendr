@@ -26,16 +26,18 @@ export default class GameComponent extends React.Component {
           <ChipStackComponent />
         </div>
         <div>
-          cards:
-          <CardStackComponent cardCostTier={1} />
-          <CardStackComponent cardCostTier={2} />
-          <CardStackComponent cardCostTier={3} />
-        </div>
-        <div>
-          nobles:
-          {game.nobles.map((noble) => {
-            return <NobleComponent noble={noble} key={keyForNoble(noble)} />;
-          })}
+          <div>
+            cards:
+            <CardStackComponent cardCostTier={1} />
+            <CardStackComponent cardCostTier={2} />
+            <CardStackComponent cardCostTier={3} />
+          </div>
+          <div className="nobles-container">
+            nobles:
+            {game.nobles.map((noble) => {
+              return <NobleComponent noble={noble} key={keyForNoble(noble)} />;
+            })}
+          </div>
         </div>
       </div>
     );
