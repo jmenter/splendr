@@ -1,6 +1,7 @@
+import "./NobleComponent.scss";
+
 import { Noble } from "../../game/noble";
 import React from "react";
-import "./NobleComponent.scss";
 
 export type NobleComponentProps = {
   noble: Noble;
@@ -14,7 +15,10 @@ export const NobleComponent: React.FunctionComponent<NobleComponentProps> = (
       <div className="point-value">{props.noble.pointValue}</div>
       {props.noble.cardRequirements.map((requirement) => {
         return (
-          <div className={"requirement " + requirement.color} key={`${requirement.color}${requirement.amount}`}>
+          <div
+            className={"requirement " + requirement.color}
+            key={`${requirement.color}${requirement.amount}`}
+          >
             {requirement.amount}
           </div>
         );

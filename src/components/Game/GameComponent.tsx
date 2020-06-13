@@ -1,3 +1,5 @@
+import "./GameComponent.scss";
+
 import React from "react";
 import stores from "../../stores/Stores";
 import { observer } from "mobx-react";
@@ -5,7 +7,6 @@ import PlayerComponent from "./PlayerComponent";
 import { NobleComponent } from "./NobleComponent";
 import CardStackComponent from "./CardStackComponent";
 import ChipStackComponent from "./ChipStackComponent";
-import "./GameComponent.scss";
 import { keyForNoble } from "../../game/noble";
 
 @observer

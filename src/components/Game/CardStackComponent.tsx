@@ -1,5 +1,6 @@
-import React from "react";
 import "./CardStackComponent.scss";
+
+import React from "react";
 import stores from "../../stores/Stores";
 import { observer } from "mobx-react";
 import { CardCostTier } from "../../game/card";

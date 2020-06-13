@@ -1,9 +1,10 @@
+import "./PlayerComponent.scss";
+
 import React from "react";
 import stores from "../../stores/Stores";
 import { observer } from "mobx-react";
 import { observable } from "mobx";
 import Player from "../../game/player";
-import "./PlayerComponent.scss";
 
 export type PlayerProps = {
   player: Player;

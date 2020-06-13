@@ -1,7 +1,8 @@
+import "./ChipStackComponent.scss";
+
 import React from "react";
 import stores from "../../stores/Stores";
 import { observer } from "mobx-react";
-import "./ChipStackComponent.scss";
 
 export default observer(() => {
   const { game } = stores.gameStore;
