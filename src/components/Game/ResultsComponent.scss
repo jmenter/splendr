@@ -1,5 +1,16 @@
 .ResultsComponent {
   text-align: center;
+  table {
+    border: 1px solid gray;
+    margin: auto;
+    padding: 16px;
+    td {
+      padding: 16px;
+    }
+    tr:nth-child(even) {
+      background-color: lightgray;
+    }
+  }
   .announce {
     font-size: 12px;
   }

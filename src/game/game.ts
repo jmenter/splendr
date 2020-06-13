@@ -15,7 +15,7 @@ export default class SplendorGame {
   @observable private currentPlayerIndex = 0;
 
   players: Player[] = [];
-  @observable winningPlayer?: Player;
+  @observable winningPlayers?: Player[];
 
   @observable chipStacks = new Map<ChipColor, number>();
   @observable cardStacks = new Map<CardCostTier, Card[]>();
@@ -58,16 +58,21 @@ export default class SplendorGame {
     return this.players[this.currentPlayerIndex];
   }
 
-  public playerCanPurchase(card: Card): boolean {
-    return (
-      !this.currentPlayer.hasTempChips && this.currentPlayer.canBuyCard(card)
-    );
+  @computed
+  get sortedPlayers(): Player[] {
+    return this.players.sort((a, b) => b.totalPoints - a.totalPoints);
   }
 
   @computed
   get playerCanReserve(): boolean {
     return (
       !this.currentPlayer.hasTempChips && this.currentPlayer.canReserveCard
+    );
+  }
+
+  public playerCanPurchase(card: Card): boolean {
+    return (
+      !this.currentPlayer.hasTempChips && this.currentPlayer.canBuyCard(card)
     );
   }
 
@@ -189,11 +194,11 @@ export default class SplendorGame {
       this.finishRound();
     } else if (playersWithSufficientPoints.length === 1) {
       console.log("1 clear winner");
-      this.endGame(playersWithSufficientPoints[0]);
+      this.endGame(playersWithSufficientPoints);
     } else {
       console.log("multiple possile winners: ", playersWithSufficientPoints);
       const sortedByScore = playersWithSufficientPoints.sort(
-        (a: Player, b: Player) => a.totalPoints - b.totalPoints
+        (a: Player, b: Player) => b.totalPoints - a.totalPoints
       );
       const highestScore = sortedByScore[0].totalPoints;
       console.log("highest score: ", highestScore);
@@ -203,9 +208,21 @@ export default class SplendorGame {
       console.log("all the higest scoreres:", highestScorers);
       if (highestScorers.length === 1) {
         console.log("1 winningest winner");
-        this.endGame(highestScorers[0]);
+        this.endGame(highestScorers);
       } else {
-        this.finishRound();
+        const sortedByCardCount = highestScorers.sort(
+          (a, b) => a.tableau.length - b.tableau.length
+        );
+        const lowestCardCount = sortedByCardCount[0].tableau.length;
+        console.log("lowest card count: ", lowestCardCount);
+        const playersWithLowestCardCount = highestScorers.filter(
+          (player) => player.tableau.length === lowestCardCount
+        );
+        console.log(
+          "players with lowest card count: ",
+          playersWithLowestCardCount
+        );
+        this.endGame(playersWithLowestCardCount);
       }
     }
   }
@@ -217,9 +234,9 @@ export default class SplendorGame {
     this.currentPlayerIndex = 0;
   }
 
-  private endGame(winner: Player) {
-    console.log("game has ended, winner: ", winner);
-    this.winningPlayer = winner;
+  private endGame(winners: Player[]) {
+    console.log("game has ended, winners: ", winners);
+    this.winningPlayers = winners;
   }
 
   private runCardTests() {

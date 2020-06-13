@@ -18,10 +18,10 @@ function App() {
 export default App;
 
 const TheGame = observer(() => {
-  const winningPlayer = stores.gameStore.game.winningPlayer;
-  if (winningPlayer) {
-    return <ResultsComponent game={stores.gameStore.game} />;
-  } else {
-    return <GameComponent />;
-  }
+  const { game } = stores.gameStore;
+  return game.winningPlayers ? (
+    <ResultsComponent game={game} />
+  ) : (
+    <GameComponent />
+  );
 });

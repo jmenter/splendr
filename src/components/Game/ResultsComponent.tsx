@@ -12,24 +12,41 @@ export default class ResultsComponent extends React.Component<
   ResultsComponentProps
 > {
   render() {
-    const sortedPlayers = this.props.game.players.sort(
-      (a, b) => b.totalPoints - a.totalPoints
-    );
-    const winningPlayer = sortedPlayers[0];
+    if (!this.props.game.winningPlayers) {
+      return <></>;
+    }
+    const winningScore = this.props.game.winningPlayers[0].totalPoints;
+    const scoreString = `with ${winningScore} points`;
+    const winnerString =
+      this.props.game.winningPlayers.length === 1
+        ? `the winner, ${scoreString}, is:`
+        : `the winners, ${scoreString}, are:`;
     return (
       <div className="ResultsComponent">
-        <div className="announce">the winner is: </div>
-        <div className="winner">{winningPlayer.name}</div>
+        <div className="announce">{winnerString}</div>
+        {this.props.game.winningPlayers.map((player) => {
+          return (
+            <div className="winner" key={Math.random()}>
+              {player.name}
+            </div>
+          );
+        })}
         <hr />
         <div>
-          final scores:{" "}
-          {sortedPlayers.map((player) => {
-            return (
-              <div>
-                player Name: {player.name} playerScore{player.totalPoints}
-              </div>
-            );
-          })}
+          all players, final scores:
+          <table>
+            <tbody>
+              {this.props.game.sortedPlayers.map((player) => {
+                return (
+                  <tr key={Math.random()}>
+                    <td>player Name: {player.name}</td>
+                    <td>player score: {player.totalPoints}</td>
+                    <td>development cards: {player.tableau.length}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
           <button onClick={() => stores.gameStore.reset()}>reset game</button>
         </div>
       </div>

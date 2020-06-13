@@ -38,6 +38,7 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
           <div>id {player.id}</div>
           <div>points {player.totalPoints}</div>
           <div className="chips-container">
+            <div className="background">player chips</div>
             <div className="player-chips">
               {Array.from(player.chips)
                 .filter((value) => value[1] > 0)
@@ -54,6 +55,7 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
           </div>
 
           <div className="cards-container">
+            <div className="background">player tableau</div>
             <div className="player-cards">
               {player.tableau.map((card) => {
                 return (
