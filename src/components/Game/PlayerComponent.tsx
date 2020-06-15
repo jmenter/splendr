@@ -5,6 +5,7 @@ import stores from "../../stores/Stores";
 import { observer } from "mobx-react";
 import { observable } from "mobx";
 import Player from "../../game/player";
+import CardComponent from "./CardComponent";
 
 export type PlayerProps = {
   player: Player;
@@ -90,15 +91,21 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
           <div className="reserve-cards-container">
             <div className="background">reserve cards</div>
             <div className="reserve-cards">
-              {player.reserveCards.map((card) => {
+              {player.reserveCards.map((card, index) => {
                 console.log("here's a card: ", card);
+                const id = `reservecard-${index}`;
+                const purchaseHandler = stores.gameStore.game.playerCanPurchase(
+                  card
+                )
+                  ? stores.gameStore.game.reservePurchaseHandler
+                  : undefined;
                 return (
-                  <div className={`card ${card.color}`} key={Math.random()}>
-                    {card.pointValue}
-                    {card.color}
-                    {/* {card.costs}
-                    {card.tier} */}
-                  </div>
+                  <CardComponent
+                    id={id}
+                    card={card}
+                    purchaseHandler={purchaseHandler}
+                    reserveHandler={undefined}
+                  />
                 );
               })}
             </div>

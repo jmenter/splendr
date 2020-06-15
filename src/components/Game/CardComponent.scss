@@ -1,0 +1,54 @@
+.CardComponent {
+  border: 1px solid #888;
+  border-radius: 4px;
+  height: 150px;
+  width: 108px;
+
+  .point-value {
+    display: inline;
+    font-size: 32px;
+    text-align: left;
+    font-weight: bold;
+  }
+
+  .indicator {
+    float: right;
+    margin: 4px;
+    .color-indicator {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+    }
+    .white {
+      background-color: white;
+      border: 2px solid black;
+    }
+    .blue {
+      background-color: blue;
+      border: 2px solid black;
+    }
+    .green {
+      background-color: green;
+      border: 2px solid black;
+    }
+    .red {
+      background-color: red;
+      border: 2px solid black;
+    }
+    .black {
+      background-color: black;
+      border: 2px solid black;
+    }
+  }
+  .costs {
+    display: inline;
+    .cost {
+      font-size: 18px;
+      font-weight: bold;
+    }
+  }
+  .actions {
+    position: relative;
+    display: inline-block;
+  }
+}

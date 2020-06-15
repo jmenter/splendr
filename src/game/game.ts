@@ -111,7 +111,7 @@ export default class SplendorGame {
     this.endPlayerTurn();
   };
 
-  @action purchaseHandler = (targetId: string) => {
+  @action tablePurchaseHandler = (targetId: string) => {
     const ids = targetId.split("-");
     const costTier = Number(ids[0]) as CardCostTier;
     const cardIndex = Number(ids[1]);
@@ -121,7 +121,17 @@ export default class SplendorGame {
       return;
     }
     const cardToBuy = cardStack.splice(cardIndex, 1)[0];
+    this.handleCardPurchaseTransaction(cardToBuy);
+  };
 
+  @action reservePurchaseHandler = (target: string) => {
+    const ids = target.split("-");
+    const index = Number(ids[1]);
+    const cardToBuy = this.currentPlayer.reserveCards.splice(index, 1)[0];
+    this.handleCardPurchaseTransaction(cardToBuy);
+  };
+
+  @action handleCardPurchaseTransaction(cardToBuy: Card) {
     var deficit = 0;
     cardToBuy.costs.forEach((cost) => {
       const costReduction = this.currentPlayer.costReductionFor(cost.color);
@@ -141,7 +151,7 @@ export default class SplendorGame {
     }
     this.currentPlayer.tableau.push(cardToBuy);
     this.endPlayerTurn();
-  };
+  }
 
   @action
   returnChipHandler = (targetId: string) => {
