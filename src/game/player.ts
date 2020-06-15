@@ -23,12 +23,12 @@ export default class Player {
   @observable nobles: Noble[] = [];
 
   @observable tableau: Card[] = [];
-  reserveCards: Card[] = [];
+  @observable reserveCards: Card[] = [];
 
   constructor(id: number, name: string) {
     this.id = id;
     this.name = name;
-    fakeTableau.forEach((card) => this.tableau.push(card));
+    // fakeTableau.forEach((card) => this.tableau.push(card));
   }
 
   public costReductionFor(cardColor: CardColor): number {

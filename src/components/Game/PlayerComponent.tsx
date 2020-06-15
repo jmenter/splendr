@@ -31,6 +31,9 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
     const { player } = this.props;
     const isActive = stores.gameStore.game.currentPlayer === this.props.player;
     const activeClass = isActive ? "active" : "inactive";
+    const playerShouldDiscard =
+      stores.gameStore.game.playerShouldDiscard && isActive;
+    const discardClass = playerShouldDiscard ? "warning" : "normal";
     return (
       <div className="PlayerComponent">
         <div className={activeClass}>
@@ -38,14 +41,31 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
           <div>id {player.id}</div>
           <div>points {player.totalPoints}</div>
           <div className="chips-container">
-            <div className="background">player chips</div>
+            <div className={`background ${discardClass}`}>
+              {playerShouldDiscard
+                ? "player chips (click to discard)"
+                : "player chips"}
+            </div>
             <div className="player-chips">
               {Array.from(player.chips)
                 .filter((value) => value[1] > 0)
                 .map((value) => {
                   const color = value[0];
                   const quantity = value[1];
-                  return (
+                  return playerShouldDiscard ? (
+                    <div
+                      id={`${color}-discard`}
+                      className={`chip ${color}`}
+                      onClick={(event) =>
+                        stores.gameStore.game.discardChipHandler(
+                          event.currentTarget.id
+                        )
+                      }
+                      key={Math.random()}
+                    >
+                      {quantity}
+                    </div>
+                  ) : (
                     <div className={`chip ${color}`} key={Math.random()}>
                       {quantity}
                     </div>
@@ -61,6 +81,23 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
                 return (
                   <div className={`card ${card.color}`} key={Math.random()}>
                     {card.pointValue}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="reserve-cards-container">
+            <div className="background">reserve cards</div>
+            <div className="reserve-cards">
+              {player.reserveCards.map((card) => {
+                console.log("here's a card: ", card);
+                return (
+                  <div className={`card ${card.color}`} key={Math.random()}>
+                    {card.pointValue}
+                    {card.color}
+                    {/* {card.costs}
+                    {card.tier} */}
                   </div>
                 );
               })}

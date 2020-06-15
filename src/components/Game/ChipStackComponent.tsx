@@ -36,8 +36,12 @@ export default observer(() => {
         )?.length
           ? 1
           : 0;
-        const grabOneEnabled = stackAmount && playerAmount === 0;
-        const grabTwoEnabled = stackAmount >= 4 && !player.tempChipCount;
+        const grabOneEnabled =
+          stackAmount && playerAmount === 0 && !game.playerShouldDiscard;
+        const grabTwoEnabled =
+          stackAmount >= 4 &&
+          !player.tempChipCount &&
+          !game.playerShouldDiscard;
         return (
           <div key={stackColor}>
             <div className={`chip-stack ${stackColor}`}>{stackAmount}</div>

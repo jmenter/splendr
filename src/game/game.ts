@@ -20,6 +20,7 @@ export default class SplendorGame {
   @observable chipStacks = new Map<ChipColor, number>();
   @observable cardStacks = new Map<CardCostTier, Card[]>();
   @observable nobles: Noble[] = [];
+  @observable playerShouldDiscard: boolean = false;
 
   constructor(numberOfPlayers: PlayerCount) {
     this.initializePlayers(numberOfPlayers);
@@ -66,15 +67,30 @@ export default class SplendorGame {
   @computed
   get playerCanReserve(): boolean {
     return (
-      !this.currentPlayer.hasTempChips && this.currentPlayer.canReserveCard
+      !this.currentPlayer.hasTempChips &&
+      this.currentPlayer.canReserveCard &&
+      !this.playerShouldDiscard
     );
   }
 
   public playerCanPurchase(card: Card): boolean {
     return (
-      !this.currentPlayer.hasTempChips && this.currentPlayer.canBuyCard(card)
+      !this.currentPlayer.hasTempChips &&
+      this.currentPlayer.canBuyCard(card) &&
+      !this.playerShouldDiscard
     );
   }
+
+  @action
+  discardChipHandler = (targetId: string) => {
+    const chipColor = this.chipColorForId(targetId);
+    const currentPlayerChipCountForColor =
+      this.currentPlayer.chips.get(chipColor) || 0;
+    this.currentPlayer.chips.set(chipColor, currentPlayerChipCountForColor - 1);
+    const currentBankChipCountForColor = this.chipStacks.get(chipColor) || 0;
+    this.chipStacks.set(chipColor, currentBankChipCountForColor + 1);
+    this.endPlayerTurn();
+  };
 
   @action
   singleChipHandler = (targetId: string) => {
@@ -179,10 +195,14 @@ export default class SplendorGame {
   }
 
   private endPlayerTurn() {
-    this.nobleCheck();
-    this.currentPlayerIndex++;
-    if (this.currentPlayerIndex >= this.players.length) {
-      this.handleEndOfRoundStuff();
+    this.playerShouldDiscard = this.currentPlayer.chipCount > 10;
+
+    if (!this.playerShouldDiscard) {
+      this.nobleCheck();
+      this.currentPlayerIndex++;
+      if (this.currentPlayerIndex >= this.players.length) {
+        this.handleEndOfRoundStuff();
+      }
     }
   }
 

@@ -16,6 +16,13 @@
     width: 322px;
     border-radius: 3px;
     border: 1px solid gray;
+
+    .normal {
+      background-color: lightgray;
+    }
+    .warning {
+      background-color: red;
+    }
     .background {
       text-align: center;
       font-size: 24px;
@@ -27,7 +34,6 @@
       bottom: 0;
       right: 0;
       z-index: -1;
-      background-color: lightgray;
       overflow: hidden;
     }
   }
