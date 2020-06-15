@@ -132,22 +132,24 @@ export default class SplendorGame {
   };
 
   @action handleCardPurchaseTransaction(cardToBuy: Card) {
-    var deficit = 0;
+    var totalDeficit = 0;
     cardToBuy.costs.forEach((cost) => {
       const costReduction = this.currentPlayer.costReductionFor(cost.color);
       const netCostForColor = cost.amount - costReduction;
       const chipAmount = this.currentPlayer.chips.get(cost.color) || 0;
+      var deficitForColor = 0;
       if (netCostForColor > chipAmount) {
-        deficit += netCostForColor - chipAmount;
+        deficitForColor = netCostForColor - chipAmount;
+        totalDeficit += deficitForColor;
       }
-      const finalCost = netCostForColor >= 0 ? netCostForColor : 0;
+      const finalCost = netCostForColor - deficitForColor;
       this.currentPlayer.removeChip(cost.color, finalCost);
       this.addChips(cost.color, finalCost);
     });
 
-    if (deficit) {
-      this.currentPlayer.removeChip("wild", deficit);
-      this.addChips("wild", deficit);
+    if (totalDeficit) {
+      this.currentPlayer.removeChip("wild", totalDeficit);
+      this.addChips("wild", totalDeficit);
     }
     this.currentPlayer.tableau.push(cardToBuy);
     this.endPlayerTurn();
