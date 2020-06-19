@@ -92,7 +92,6 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
             <div className="background">reserve cards</div>
             <div className="reserve-cards">
               {player.reserveCards.map((card, index) => {
-                console.log("here's a card: ", card);
                 const id = `reservecard-${index}`;
                 const purchaseHandler = stores.gameStore.game.playerCanPurchase(
                   card
@@ -105,6 +104,7 @@ export default class PlayerComponent extends React.Component<PlayerProps> {
                     card={card}
                     purchaseHandler={purchaseHandler}
                     reserveHandler={undefined}
+                    key={Math.random()}
                   />
                 );
               })}

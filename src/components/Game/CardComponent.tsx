@@ -13,8 +13,9 @@ export type CardComponentProps = {
 export type CardHandler = (id: string) => void;
 
 export default observer((props: CardComponentProps) => {
-  const purchaseHandler = props.purchaseHandler;
-  const reserveHandler = props.reserveHandler;
+  const { reserveHandler } = props;
+  const { purchaseHandler } = props;
+
   return (
     <div className="CardComponent" id={props.id}>
       <div className="point-value">
@@ -34,22 +35,26 @@ export default observer((props: CardComponentProps) => {
         })}
       </div>
       <div className="actions">
-        {reserveHandler && (
-          <button
-            id={props.id}
-            onClick={(event) => reserveHandler(event.currentTarget.id)}
-          >
-            hold
-          </button>
-        )}
-        {purchaseHandler && (
-          <button
-            id={props.id}
-            onClick={(event) => purchaseHandler(event.currentTarget.id)}
-          >
-            buy
-          </button>
-        )}
+        <button
+          disabled={reserveHandler === undefined}
+          id={props.id}
+          onClick={
+            reserveHandler &&
+            ((event) => reserveHandler(event.currentTarget.id))
+          }
+        >
+          hold
+        </button>
+        <button
+          disabled={purchaseHandler === undefined}
+          id={props.id}
+          onClick={
+            purchaseHandler &&
+            ((event) => purchaseHandler(event.currentTarget.id))
+          }
+        >
+          buy
+        </button>
       </div>
     </div>
   );

@@ -24,7 +24,11 @@ export default observer((props: CardStackComponentProps) => {
   const visibleCards = cards.slice(0, VISIBLE_SLOTS);
   return (
     <div className="CardStackComponent">
-      <div className="card remaining">{remainingCards} cards remaining</div>
+      <div className="card remaining">
+        {remainingCards} cards
+        <br />
+        remaining
+      </div>
       {visibleCards.map((card, index) => {
         const id = `${props.cardCostTier}-${index}`;
         return (

@@ -1,9 +1,9 @@
 .CardComponent {
-  border: 1px solid #888;
+  border: 2px solid #888;
   border-radius: 4px;
   height: 150px;
   width: 108px;
-
+  margin: 4px;
   .point-value {
     display: inline;
     font-size: 32px;
@@ -48,7 +48,8 @@
     }
   }
   .actions {
-    position: relative;
-    display: inline-block;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
   }
 }
