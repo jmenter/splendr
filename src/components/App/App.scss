@@ -1,0 +1,13 @@
+.App {
+  button {
+    border: 1px solid darkgray;
+    border-radius: 3px;
+    min-height: 20px;
+    margin: 2px;
+    font-size: 14px;
+    &:active {
+      background-color: #333;
+      color: #ddd;
+    }
+  }
+}
