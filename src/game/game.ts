@@ -28,7 +28,6 @@ export default class SplendorGame {
     this.initializeCards();
     this.initializeNobles(numberOfPlayers + 1);
     // this.runCardTests();
-    // this.winningPlayer = this.players[0];
   }
 
   private initializePlayers(amount: number) {
@@ -272,8 +271,8 @@ export default class SplendorGame {
   }
 
   private runCardTests() {
-    // this.runTestsForCards(tier1Cards, "1");
-    // this.runTestsForCards(tier2Cards, "2");
+    this.runTestsForCards(tier1Cards, "1");
+    this.runTestsForCards(tier2Cards, "2");
     this.runTestsForCards(tier3Cards, "3");
   }
 
@@ -289,11 +288,6 @@ export default class SplendorGame {
       "these are the totalPointsValuesReduced",
       totalPointsValuesReduced
     );
-
-    // const totalPoints = cards
-    //   .map((card) => card.pointValue)
-    //   .reduce((p, c) => p + c);
-    // console.log(`tier ${tierLabel} points: ${totalPoints}`);
 
     console.log("cards of color:");
     AllCardColors.forEach((cardColor) => {
@@ -317,11 +311,6 @@ export default class SplendorGame {
         (p, c) => p + c
       );
       console.log("reduced", flatMappedCostsOfColorFilterReMappedReduced);
-      // const costsOfColor = cards;
-      // .flatMap((card) => card.costs)
-      // .filter((cardCost) => cardCost.color === cardColor)
-      // .map((cardCost) => cardCost.amount)
-      // .reduce((p, c) => p + c);
       console.log(`${cardsOfColor.length} cards for ${cardColor}`);
       console.log(
         `tier ${tierLabel} costs for ${cardColor}: ${flatMappedCostsOfColorFilterReMappedReduced}`

@@ -2,14 +2,13 @@ import "./NobleComponent.scss";
 
 import { Noble } from "../../game/noble";
 import React from "react";
+import { observer } from "mobx-react";
 
 export type NobleComponentProps = {
   noble: Noble;
 };
 
-export const NobleComponent: React.FunctionComponent<NobleComponentProps> = (
-  props
-) => {
+export default observer((props: NobleComponentProps) => {
   return (
     <div className="NobleComponent">
       <div className="point-value">{props.noble.pointValue}</div>
@@ -25,4 +24,4 @@ export const NobleComponent: React.FunctionComponent<NobleComponentProps> = (
       })}
     </div>
   );
-};
+});
