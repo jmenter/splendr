@@ -2,85 +2,95 @@ import Player from "./player";
 import { CardCostTier, Card, CardColor, AllCardColors } from "./card";
 import { Noble, allNobles } from "./noble";
 import { randomizeArray, repeat } from "../utils/utilities";
-import { computed, observable, action } from "mobx";
+import { computed, observable, action, makeObservable } from "mobx";
 import { tier1Cards } from "./tier1Cards";
 import { tier2Cards } from "./tier2Cards";
 import { tier3Cards } from "./tier3Cards";
+import CardStacks from "./cardStacks";
 
 export type PlayerCount = 2 | 3 | 4;
 export type ChipColor = CardColor | "wild";
 
 export default class SplendorGame {
-  @observable currentRound: number = 1;
-  @observable private currentPlayerIndex = 0;
+  currentRound: number = 1;
+  currentPlayerIndex = 0;
 
   players: Player[] = [];
-  @observable winningPlayers?: Player[];
+  winningPlayers?: Player[];
 
-  @observable chipStacks = new Map<ChipColor, number>();
-  @observable cardStacks = new Map<CardCostTier, Card[]>();
-  @observable nobles: Noble[] = [];
-  @observable playerShouldDiscard: boolean = false;
+  chipStacks = new Map<ChipColor, number>();
+  cardStacks = new CardStacks();
+  nobles: Noble[] = [];
 
   constructor(numberOfPlayers: PlayerCount) {
-    this.initializePlayers(numberOfPlayers);
-    this.initializeChips(numberOfPlayers === 4 ? 7 : numberOfPlayers + 2);
-    this.initializeCards();
-    this.initializeNobles(numberOfPlayers + 1);
+    makeObservable(this, {
+      currentRound: observable,
+      currentPlayerIndex: observable,
+      winningPlayers: observable,
+      chipStacks: observable,
+      cardStacks: observable,
+      nobles: observable,
+      currentPlayer: computed,
+      sortedPlayers: computed,
+      discardChipHandler: action,
+      singleChipHandler: action,
+      doubleChipHandler: action,
+      tablePurchaseHandler: action,
+      reservePurchaseHandler: action,
+      handleCardPurchaseTransaction: action,
+      returnChipHandler: action,
+      reserveHandler: action,
+    });
+    this.reset(numberOfPlayers);
     // this.runCardTests();
   }
 
+  reset(numberOfPlayers: PlayerCount) {
+    this.initializeGameState();
+    this.initializePlayers(numberOfPlayers);
+    this.initializeCards();
+    this.initializeChips(numberOfPlayers === 4 ? 7 : numberOfPlayers + 2);
+    this.initializeNobles(numberOfPlayers + 1);
+  }
+
+  private initializeGameState() {
+    this.currentRound = 1;
+    this.currentPlayerIndex = 0;
+  }
+
   private initializePlayers(amount: number) {
+    this.players = [];
+    this.winningPlayers = undefined;
     repeat(amount, (index) => {
       this.players.push(new Player(index + 1, "player"));
     });
   }
 
+  private initializeCards() {
+    this.cardStacks = new CardStacks();
+  }
+
   private initializeChips(amount: number) {
+    this.chipStacks = new Map<ChipColor, number>();
     AllCardColors.forEach((color) => {
       this.chipStacks.set(color, amount);
     });
     this.chipStacks.set("wild", 5);
   }
 
-  private initializeCards() {
-    this.cardStacks.set(1, randomizeArray(tier1Cards));
-    this.cardStacks.set(2, randomizeArray(tier2Cards));
-    this.cardStacks.set(3, randomizeArray(tier3Cards));
-  }
-
   private initializeNobles(amount: number) {
+    this.nobles = [];
     this.nobles = randomizeArray(allNobles).splice(0, amount);
   }
 
-  @computed
   get currentPlayer(): Player {
     return this.players[this.currentPlayerIndex];
   }
 
-  @computed
   get sortedPlayers(): Player[] {
     return this.players.sort((a, b) => b.totalPoints - a.totalPoints);
   }
 
-  @computed
-  get playerCanReserve(): boolean {
-    return (
-      !this.currentPlayer.hasTempChips &&
-      this.currentPlayer.canReserveCard &&
-      !this.playerShouldDiscard
-    );
-  }
-
-  public playerCanPurchase(card: Card): boolean {
-    return (
-      !this.currentPlayer.hasTempChips &&
-      this.currentPlayer.canBuyCard(card) &&
-      !this.playerShouldDiscard
-    );
-  }
-
-  @action
   discardChipHandler = (targetId: string) => {
     const chipColor = this.chipColorForId(targetId);
     const currentPlayerChipCountForColor =
@@ -91,7 +101,6 @@ export default class SplendorGame {
     this.endPlayerTurn();
   };
 
-  @action
   singleChipHandler = (targetId: string) => {
     const chipColor = this.chipColorForId(targetId);
     this.removeChips(chipColor, 1);
@@ -102,7 +111,6 @@ export default class SplendorGame {
     }
   };
 
-  @action
   doubleChipHandler = (targetId: string) => {
     const chipColor = this.chipColorForId(targetId);
     this.removeChips(chipColor, 2);
@@ -110,27 +118,26 @@ export default class SplendorGame {
     this.endPlayerTurn();
   };
 
-  @action tablePurchaseHandler = (targetId: string) => {
+  tablePurchaseHandler = (targetId: string) => {
     const ids = targetId.split("-");
     const costTier = Number(ids[0]) as CardCostTier;
     const cardIndex = Number(ids[1]);
-    const cardStack = this.cardStacks.get(costTier);
-    if (!cardStack) {
-      this.endPlayerTurn();
-      return;
+    const card = this.cardStacks.stackForTier(costTier).splice(cardIndex, 1)[0];
+    if (card) {
+      this.handleCardPurchaseTransaction(card);
     }
-    const cardToBuy = cardStack.splice(cardIndex, 1)[0];
-    this.handleCardPurchaseTransaction(cardToBuy);
   };
 
-  @action reservePurchaseHandler = (target: string) => {
+  reservePurchaseHandler = (target: string) => {
     const ids = target.split("-");
     const index = Number(ids[1]);
     const cardToBuy = this.currentPlayer.reserveCards.splice(index, 1)[0];
-    this.handleCardPurchaseTransaction(cardToBuy);
+    if (cardToBuy) {
+      this.handleCardPurchaseTransaction(cardToBuy);
+    }
   };
 
-  @action handleCardPurchaseTransaction(cardToBuy: Card) {
+  handleCardPurchaseTransaction(cardToBuy: Card) {
     var totalDeficit = 0;
     cardToBuy.costs.forEach((cost) => {
       const costReduction = this.currentPlayer.costReductionFor(cost.color);
@@ -154,22 +161,22 @@ export default class SplendorGame {
     this.endPlayerTurn();
   }
 
-  @action
   returnChipHandler = (targetId: string) => {
     const color = this.chipColorForId(targetId);
     this.currentPlayer.removeChip(color, 1, true);
     this.addChips(color, 1);
   };
 
-  @action
   reserveHandler = (targetId: string) => {
+    console.log("reserve handler: ", targetId);
     const ids = targetId.split("-");
     const tier = Number(ids[0]) as CardCostTier;
     const index = Number(ids[1]);
-    const cardStack = this.cardStacks.get(tier);
-
-    if (cardStack) {
-      const card = cardStack.splice(index, 1)[0];
+    console.log("stack", this.cardStacks.stackForTier(tier));
+    const stack = this.cardStacks.stackForTier(tier);
+    const card = stack.splice(index, 1)[0];
+    console.log("card to reseve: ", card);
+    if (card) {
       this.currentPlayer.reserveCards.push(card);
       const currentValue = this.chipStacks.get("wild");
       if (currentValue && currentValue > 0) {
@@ -206,9 +213,7 @@ export default class SplendorGame {
   }
 
   private endPlayerTurn() {
-    this.playerShouldDiscard = this.currentPlayer.chipCount > 10;
-
-    if (!this.playerShouldDiscard) {
+    if (!this.currentPlayer.needsToDiscard) {
       this.nobleCheck();
       this.currentPlayerIndex++;
       if (this.currentPlayerIndex >= this.players.length) {
@@ -303,13 +308,11 @@ export default class SplendorGame {
         (cardCost) => cardCost.color === cardColor
       );
       console.log("filter", flatMappedCostsOfColorFilter);
-      const flatMappedCostsOfColorFilterReMapped = flatMappedCostsOfColorFilter.map(
-        (cardCost) => cardCost.amount
-      );
+      const flatMappedCostsOfColorFilterReMapped =
+        flatMappedCostsOfColorFilter.map((cardCost) => cardCost.amount);
       console.log("map", flatMappedCostsOfColorFilterReMapped);
-      const flatMappedCostsOfColorFilterReMappedReduced = flatMappedCostsOfColorFilterReMapped.reduce(
-        (p, c) => p + c
-      );
+      const flatMappedCostsOfColorFilterReMappedReduced =
+        flatMappedCostsOfColorFilterReMapped.reduce((p, c) => p + c);
       console.log("reduced", flatMappedCostsOfColorFilterReMappedReduced);
       console.log(`${cardsOfColor.length} cards for ${cardColor}`);
       console.log(

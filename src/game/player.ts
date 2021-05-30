@@ -1,48 +1,60 @@
 import { ChipColor } from "./game";
 import { Card, CardColor } from "./card";
-import { observable, computed, action } from "mobx";
+import { observable, computed, action, makeObservable } from "mobx";
 import { Noble, CardRequirement } from "./noble";
+import { DefaultPreventer, PlayerEvent } from "../utils/utilities";
 
-// const fakeTableau: Card[] = [
-//   { pointValue: 0, color: "red", tier: 1, costs: [] },
-//   { pointValue: 2, color: "red", tier: 1, costs: [] },
-//   { pointValue: 1, color: "blue", tier: 1, costs: [] },
-//   { pointValue: 0, color: "blue", tier: 1, costs: [] },
-//   { pointValue: 0, color: "green", tier: 1, costs: [] },
-//   { pointValue: 4, color: "green", tier: 1, costs: [] },
-//   { pointValue: 0, color: "white", tier: 1, costs: [] },
-//   { pointValue: 0, color: "white", tier: 1, costs: [] },
-//   { pointValue: 4, color: "black", tier: 1, costs: [] },
-//   { pointValue: 3, color: "black", tier: 1, costs: [] },
-// ];
 export default class Player {
   id: number;
-  @observable name: string;
-  @observable chips = new Map<ChipColor, number>();
-  @observable tempChips: ChipColor[] = [];
-  @observable nobles: Noble[] = [];
+  name: string;
+  tempName?: string;
+  chips = new Map<ChipColor, number>();
+  tempChips: ChipColor[] = [];
+  nobles: Noble[] = [];
 
-  @observable tableau: Card[] = [];
-  @observable reserveCards: Card[] = [];
+  tableau: Card[] = [];
+  reserveCards: Card[] = [];
 
   constructor(id: number, name: string) {
+    makeObservable(this, {
+      name: observable,
+      tempName: observable,
+      chips: observable,
+      tempChips: observable,
+      nobles: observable,
+      tableau: observable,
+      reserveCards: observable,
+      canReserveCard: computed,
+      totalPoints: computed,
+      needsToDiscard: computed,
+      chipCount: computed,
+      tempChipCount: computed,
+      hasTempChips: computed,
+      storeTempPlayerName: action,
+      changeHandler: action,
+      blurHandler: action,
+      submitHandler: action,
+      removeChip: action
+    })
     this.id = id;
     this.name = name;
     // fakeTableau.forEach((card) => this.tableau.push(card));
   }
 
+  public buyingPowerForColor(cardColor: CardColor): number {
+    const chipPower = this.chips.get(cardColor) || 0;
+    const cardPower = this.costReductionFor(cardColor);
+    return chipPower + cardPower;
+  }
+  
   public costReductionFor(cardColor: CardColor): number {
     return this.tableau.filter((card) => card.color === cardColor).length;
   }
 
-  public buyingPowerForColor(chipColor: ChipColor): number {
-    const chipPower = this.chips.get(chipColor) || 0;
-    const cardPower = this.tableau.filter((card) => card.color === chipColor)
-      .length;
-    return chipPower + cardPower;
-  }
-
   public canBuyCard(card: Card): boolean {
+    if (this.hasTempChips || this.needsToDiscard) {
+      return false;
+    }
     var deficit = 0;
     card.costs.forEach((cost) => {
       const amount = this.buyingPowerForColor(cost.color);
@@ -71,37 +83,34 @@ export default class Player {
     );
   }
 
-  @computed
   get canReserveCard(): boolean {
-    return this.reserveCards.length < 3;
+    return !this.hasTempChips && !this.needsToDiscard && this.reserveCards.length < 3;
   }
 
-  @computed
   get totalPoints(): number {
-    var cardPoints = 0;
-    this.tableau.forEach((card) => (cardPoints += card.pointValue));
-    var noblesPoints = 0;
-    this.nobles.forEach((noble) => (noblesPoints += noble.pointValue));
+    const cardPoints = this.tableau.reduce((previous: number, current: Card) =>  previous + current.pointValue, 0)
+    const noblesPoints = this.nobles.reduce((previous: number, current: Noble) => previous + current.pointValue , 0);
     return cardPoints + noblesPoints;
   }
 
-  @computed
-  get chipCount(): number {
-    return this.getChipCount();
+  get needsToDiscard(): boolean {
+    return this.chipCount > 10;
   }
 
-  @computed
-  get tempChipCount(): number {
-    return this.getChipCount(true);
-  }
-
-  @computed
   get hasTempChips(): boolean {
     return this.tempChipCount > 0;
   }
 
+  get chipCount(): number {
+    return this.getChipCount();
+  }  
+
+  get tempChipCount(): number {
+    return this.getChipCount(true);
+  }  
+
   public saveTempChips() {
-    this.tempChips.forEach((color: ChipColor) => {
+    this.tempChips.forEach((color) => {
       const currentValue = this.chips.get(color) || 0;
       this.chips.set(color, currentValue + 1);
     });
@@ -121,33 +130,42 @@ export default class Player {
     }
   }
 
-  @action
+   storeTempPlayerName() {
+    if (this.tempName) {
+      this.name = this.tempName;
+      this.tempName = undefined;
+    }
+  }
+  
+   changeHandler = (e:PlayerEvent) => {
+    this.tempName = e.target.value;
+  }
+
+   blurHandler = (e:PlayerEvent) => {
+    this.storeTempPlayerName();
+  }
+
+   submitHandler = (e: DefaultPreventer) => {
+    this.storeTempPlayerName();
+    e.preventDefault();
+  }
+
+  
   removeChip(chipColor: ChipColor, amount: number = 1, temp: boolean = false) {
     if (temp) {
       const index = this.tempChips.indexOf(chipColor);
       this.tempChips.splice(index, 1);
     } else {
-    }
-    const currentValue = this.chips.get(chipColor);
-    if (!currentValue) {
-      return;
-    }
-    console.log("removing chip", chipColor, currentValue, amount);
-    if (currentValue >= amount) {
-      this.chips.set(chipColor, currentValue - amount);
-    } else {
-      this.chips.set(chipColor, 0);
+      const currentValue = this.chips.get(chipColor) || 0;
+      if (currentValue >= amount) {
+        this.chips.set(chipColor, currentValue - amount);
+      } else {
+        this.chips.set(chipColor, 0);
+      }
     }
   }
 
   private getChipCount(temp: boolean = false): number {
-    if (temp) {
-      return this.tempChips.length;
-    }
-    const values = Array.from(this.chips.values());
-    if (!values.length) {
-      return 0;
-    }
-    return values.reduce((s, c) => s + c);
+    return temp ? this.tempChips.length : Array.from(this.chips.values()).reduce((p, c) => p + c, 0)
   }
 }

@@ -1,6 +1,4 @@
 import "./ResultsComponent.scss";
-
-import React from "react";
 import stores from "../../stores/Stores";
 import SplendorGame from "../../game/game";
 import { observer } from "mobx-react";

@@ -1,10 +1,15 @@
 import SplendorGame from "../game/game";
-import { observable } from "mobx";
+import { makeObservable, observable } from "mobx";
 
 const NUMBER_OF_PLAYERS = 2;
 
 export default class GameStore {
-  @observable game: SplendorGame = new SplendorGame(NUMBER_OF_PLAYERS);
+  
+  game: SplendorGame = new SplendorGame(NUMBER_OF_PLAYERS);
+  
+  constructor() {
+    makeObservable(this, {game: observable})
+  }
 
   reset() {
     this.game = new SplendorGame(NUMBER_OF_PLAYERS);

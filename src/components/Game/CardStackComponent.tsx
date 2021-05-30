@@ -14,11 +14,7 @@ const VISIBLE_SLOTS = 4;
 
 export default observer((props: CardStackComponentProps) => {
   const { game } = stores.gameStore;
-  const cards = game.cardStacks.get(props.cardCostTier);
-  if (!cards) {
-    return <div />;
-  }
-
+  const cards = game.cardStacks.stackForTier(props.cardCostTier);
   const remaining = cards.length - VISIBLE_SLOTS;
   const remainingCards = remaining > 0 ? remaining : 0;
   const visibleCards = cards.slice(0, VISIBLE_SLOTS);
@@ -37,12 +33,12 @@ export default observer((props: CardStackComponentProps) => {
             id={id}
             card={card}
             purchaseHandler={
-              game.playerCanPurchase(card)
+              game.currentPlayer.canBuyCard(card)
                 ? game.tablePurchaseHandler
                 : undefined
             }
             reserveHandler={
-              game.playerCanReserve ? game.reserveHandler : undefined
+              game.currentPlayer.canReserveCard ? game.reserveHandler : undefined
             }
           />
         );

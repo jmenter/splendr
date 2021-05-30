@@ -1,6 +1,5 @@
 import "./CardComponent.scss";
 import { observer } from "mobx-react";
-import React from "react";
 import { Card } from "../../game/card";
 
 export type CardComponentProps = {
@@ -36,22 +35,16 @@ export default observer((props: CardComponentProps) => {
       </div>
       <div className="actions">
         <button
-          disabled={reserveHandler === undefined}
+          disabled={!reserveHandler}
           id={props.id}
-          onClick={
-            reserveHandler &&
-            ((event) => reserveHandler(event.currentTarget.id))
-          }
+          onClick={(event) => reserveHandler?.(event.currentTarget.id)}
         >
           hold
         </button>
         <button
-          disabled={purchaseHandler === undefined}
+          disabled={!purchaseHandler}
           id={props.id}
-          onClick={
-            purchaseHandler &&
-            ((event) => purchaseHandler(event.currentTarget.id))
-          }
+          onClick={(event) => purchaseHandler?.(event.currentTarget.id)}
         >
           buy
         </button>
